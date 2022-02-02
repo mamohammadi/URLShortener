@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using URLShortener.Contracts;
 using URLShortener.Contracts.Algorithms;
 using URLShortener.Contracts.Data.Entities;
 using URLShortener.Contracts.Data.Repositories;
@@ -32,7 +33,8 @@ namespace URLShortener.Core.Services
         {
             try
             {
-                return _shortenAlgorithm.Apply(url);
+                var uri = GetUri(url);
+                return $"{Config.BaseUrl}{_shortenAlgorithm.Apply(url)}";
             }
             catch (Exception) 
             {
@@ -43,7 +45,7 @@ namespace URLShortener.Core.Services
 
         private async Task<bool> SaveToDatabase(string url, string shortVersion)
         {
-            await _urlRepository.AddAsync(new URL()
+            _urlRepository.Add(new URL()
             {
                 LongURLVersion = url,
                 ShortURLVersion = shortVersion,
@@ -86,6 +88,22 @@ namespace URLShortener.Core.Services
             }
 
             return shortVersion;
+        }
+
+        public bool IsValidUrl(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return false;
+
+            Uri result = GetUri(url);
+            return result != null
+                && (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps);
+        }
+
+        public Uri GetUri(string url)
+        {
+            Uri result;
+            return Uri.TryCreate(url, UriKind.Absolute, out result) ? result : null;
         }
     }
 }
