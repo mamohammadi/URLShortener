@@ -11,7 +11,7 @@ namespace URLShortener.Contracts.Services
     {
         Task<string> GetLongURLVersionAsync(string shortUrl);
 
-        Task<long> GetURLHitCountAsync(string shortUrl);
+        Task<long> GetURLHitCountAsync(string baseAddress, string shortUrl);
 
         Task<IEnumerable<URLInfoDTO>> GetAllURLsAsync();
     }

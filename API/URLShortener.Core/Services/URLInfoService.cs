@@ -52,21 +52,26 @@ namespace URLShortener.Core.Services
             try
             {
                 var result = await _urlRepository.FindByShortVersionAsync(shortUrl);
-                result.HitCount++;
-                await _urlRepository.CommitAsync();
-                return result.LongURLVersion;
+                if (result != null)
+                {
+                    result.HitCount++;
+                    await _urlRepository.CommitAsync();
+                    return result.LongURLVersion;
+                }
             }
             catch(Exception)
             {
                 // Log
-                return null;
+                
             }
+            return null;
         }
 
-        public Task<long> GetURLHitCountAsync(string shortUrl)
+        public Task<long> GetURLHitCountAsync(string baseAddress, string shortUrl)
         {
             try
             {
+                shortUrl = shortUrl.Replace(baseAddress, string.Empty);
                 return _urlRepository.GetHitCountAsync(shortUrl);
             }
             catch(Exception)
