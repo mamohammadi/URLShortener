@@ -22,7 +22,7 @@ namespace URLShortener.API.Controllers
         [Route("shorten")]
         public async Task<ActionResult<string>> Shorten(string url)
         {
-            // Pre-Validate
+            //Pre-Validate
             if (!_urlShortenerervice.IsValidUrl(url))
                 return BadRequest("Provided url is not a valid URL!");
 
@@ -30,7 +30,7 @@ namespace URLShortener.API.Controllers
             if (string.IsNullOrWhiteSpace(shortenResult))
                 return StatusCode(500);
 
-            return shortenResult;
+            return $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/urlinfo/{shortenResult}";
         }
     }
 }
