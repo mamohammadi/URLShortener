@@ -25,7 +25,7 @@ namespace URLShortener.Core.Services
             catch (Exception)
             {
                 /* Logging */
-                return null;
+                return Task.FromResult(string.Empty);
             }
         }
 
@@ -33,10 +33,9 @@ namespace URLShortener.Core.Services
         {
             try
             {
-                var uri = GetUri(url);
-                return $"{Config.BaseUrl}{_shortenAlgorithm.Apply(url)}";
+                return $"{_shortenAlgorithm.Apply(url, DateTime.UtcNow.Ticks.ToString())}";
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 /* Log */
                 return null;
@@ -64,6 +63,27 @@ namespace URLShortener.Core.Services
             return true;
         }
 
+        private async Task<string> GenerateUniqueShortUrl(string url)
+        {
+            try
+            {
+                for (; ; )
+                {
+                    var result = ApplyShortenAlgorithm(url);
+                    if (string.IsNullOrWhiteSpace(result))
+                        return null;
+
+                    if (!await _urlRepository.ShortURLExists(result))
+                        return result;
+                }
+            }
+            catch (Exception)
+            {
+                // Log
+                return null;
+            }
+        }
+
         public URLShortenerService(IURLRepository urlRepository, IShortenAlgorithm shortenAlgorithm)
         {
             _urlRepository = urlRepository;
@@ -74,11 +94,10 @@ namespace URLShortener.Core.Services
         {
             // First check if exists in database
             string shortVersion = await GetShortVersionFromDatabase(url);
-            if (shortVersion == string.Empty)
+            if (shortVersion == null)
             {
                 // Build new one
-                shortVersion = ApplyShortenAlgorithm(url);
-
+                shortVersion = await GenerateUniqueShortUrl(url);
                 if (!string.IsNullOrWhiteSpace(shortVersion))
                 {
                     // Persist to DB
