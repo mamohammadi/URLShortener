@@ -12,5 +12,6 @@ namespace URLShortener.Contracts.Data.Repositories
         public Task<long> GetHitCountAsync();
         public Task<URL> FindByShortVersionAsync(string shortVersion);
         public Task<URL> FindByShortVersionNoTrackingAsync(string shortVersion);
+        public Task<string> GetShortURLByLongVersionAsync(string longVersion);
     }
 }
