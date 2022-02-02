@@ -9,10 +9,10 @@ namespace URLShortener.Contracts.Services
 {
     interface IURLInfoService
     {
-        string GetLongURLVersion(string shortUrl);
+        Task<string> GetLongURLVersionAsync(string shortUrl);
 
-        long GetURLHitCount(string shortUrl);
+        Task<long> GetURLHitCountAsync(string shortUrl);
 
-        IEnumerable<URLInfoDTO> GetAllURLs();
+        Task<IEnumerable<URLInfoDTO>> GetAllURLsAsync();
     }
 }

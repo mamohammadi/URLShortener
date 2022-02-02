@@ -1,7 +1,9 @@
-﻿namespace URLShortener.Contracts.Services
+﻿using System.Threading.Tasks;
+
+namespace URLShortener.Contracts.Services
 {
     public interface IURLShortenerService
     {
-        string GetShortURLVersion(string url);
+        Task<string> GetShortURLVersionAsync(string url);
     }
 }
