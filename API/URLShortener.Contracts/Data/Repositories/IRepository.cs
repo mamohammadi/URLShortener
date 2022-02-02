@@ -8,7 +8,7 @@ namespace URLShortener.Contracts.Data.Repositories
 {
     public interface IRepository<T>
     {
-        Task AddAsync(T item);
+        void Add(T item);
         Task<IEnumerable<T>> GetAllNoTrackingAsync();
         Task CommitAsync();
     }
