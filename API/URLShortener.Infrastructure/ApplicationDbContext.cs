@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,25 @@ namespace URLShortener.Infrastructure
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+        }
+
+        public static ApplicationDbContext CreateInstance(string connectionString)
+        {
+            var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionBuilder.UseSqlServer(connectionString);
+
+            return new ApplicationDbContext(optionBuilder.Options);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<URL>()
+                .HasIndex(u => u.ShortURLVersion)
+                .IsUnique();
+
+            modelBuilder.Entity<URL>()
+                .HasIndex(u => u.LongURLVersion)
+                .IsUnique();
         }
     }
 }
