@@ -35,8 +35,11 @@ namespace URLShortener.Infrastructure.Repositories
 
         public async Task<long> GetHitCountAsync(string shortUrl)
         {
-            return await _dbContext.URLs
-                .LongCountAsync(u => u.ShortURLVersion == shortUrl);
+            var item = await _dbContext.URLs
+                .SingleOrDefaultAsync(u => u.ShortURLVersion == shortUrl);
+            if (item != null)
+                return item.HitCount;
+            return 0;
         }
 
         public Task<URL> FindByShortVersionAsync(string shortVersion)
@@ -51,6 +54,12 @@ namespace URLShortener.Infrastructure.Repositories
                 .Where(u => u.LongURLVersion == longVersion)
                 .Select(u => u.ShortURLVersion)
                 .FirstOrDefaultAsync();
+        }
+
+        public Task<bool> ShortURLExists(string shortUrl)
+        {
+            return _dbContext.URLs
+                .AnyAsync(u => u.ShortURLVersion == shortUrl);
         }
     }
 }
