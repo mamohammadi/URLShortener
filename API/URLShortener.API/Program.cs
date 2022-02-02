@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using URLShortener.Infrastructure;
 
 namespace URLShortener.API
 {
@@ -13,7 +16,16 @@ namespace URLShortener.API
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var builder = CreateHostBuilder(args).Build();
+
+            using var scope = builder.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            if (db.Database.GetPendingMigrations().Any())
+            {
+                db.Database.Migrate();
+            }
+
+            builder.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
