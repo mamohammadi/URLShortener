@@ -47,11 +47,14 @@ namespace URLShortener.Core.Services
             }
         }
 
-        public Task<string> GetLongURLVersionAsync(string shortUrl)
+        public async Task<string> GetLongURLVersionAsync(string shortUrl)
         {
             try
             {
-                return _urlRepository.GetLongUrlByShortVersionAsync(shortUrl);
+                var result = await _urlRepository.FindByShortVersionAsync(shortUrl);
+                result.HitCount++;
+                await _urlRepository.CommitAsync();
+                return result.LongURLVersion;
             }
             catch(Exception)
             {
@@ -64,7 +67,7 @@ namespace URLShortener.Core.Services
         {
             try
             {
-                return _urlRepository.GetHitCountAsync();
+                return _urlRepository.GetHitCountAsync(shortUrl);
             }
             catch(Exception)
             {

@@ -39,12 +39,10 @@ namespace URLShortener.Infrastructure.Repositories
                 .LongCountAsync(u => u.ShortURLVersion == shortUrl);
         }
 
-        public Task<string> GetLongUrlByShortVersionAsync(string shortVersion)
+        public Task<URL> FindByShortVersionAsync(string shortVersion)
         {
             return _dbContext.URLs
-                .Where(u => u.ShortURLVersion == shortVersion)
-                .Select(u => u.LongURLVersion)
-                .FirstOrDefaultAsync();
+                .SingleOrDefaultAsync(u => u.ShortURLVersion == shortVersion);
         }
 
         public Task<string> GetShortURLByLongVersionAsync(string longVersion)

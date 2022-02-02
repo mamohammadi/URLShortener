@@ -10,7 +10,7 @@ namespace URLShortener.Contracts.Data.Repositories
     public interface IURLRepository: IRepository<URL>
     {
         public Task<long> GetHitCountAsync(string shortUrl);
-        public Task<string> GetLongUrlByShortVersionAsync(string shortVersion);
+        public Task<URL> FindByShortVersionAsync(string shortVersion);
         public Task<string> GetShortURLByLongVersionAsync(string longVersion);
     }
 }
