@@ -8,6 +8,6 @@ namespace URLShortener.Contracts.Algorithms
 {
     public interface IShortenAlgorithm
     {
-        public string Apply(string input);
+        public string Apply(string input, string nounce);
     }
 }
