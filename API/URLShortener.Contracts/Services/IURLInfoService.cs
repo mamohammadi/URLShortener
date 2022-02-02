@@ -7,7 +7,7 @@ using URLShortener.Contracts.DTO;
 
 namespace URLShortener.Contracts.Services
 {
-    interface IURLInfoService
+    public interface IURLInfoService
     {
         Task<string> GetLongURLVersionAsync(string shortUrl);
 
