@@ -23,7 +23,24 @@ namespace URLShortener.API.Controllers
         [Route("hitcount")]
         public async Task<ActionResult<long>> HitCount(string shortUrl)
         {
-            return await _urlInfoService.GetURLHitCountAsync(shortUrl);
+            if (string.IsNullOrWhiteSpace(shortUrl))
+                return BadRequest("Invalid Url!");
+
+            return await _urlInfoService.GetURLHitCountAsync($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/api/urlinfo/", shortUrl);
+        }
+
+        [HttpGet]
+        [Route("{shortUrl}")]
+        public async Task<ActionResult> Go([FromRoute] string shortUrl)
+        {
+            if (string.IsNullOrWhiteSpace(shortUrl))
+                return BadRequest("Invalid short url!");
+
+            var longUrl = await _urlInfoService.GetLongURLVersionAsync(shortUrl);
+            if (string.IsNullOrWhiteSpace(longUrl))
+                return NotFound("URL not found!");
+
+            return Redirect(longUrl);
         }
 
         [HttpGet]
